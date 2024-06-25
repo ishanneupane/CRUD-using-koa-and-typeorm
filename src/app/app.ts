@@ -8,7 +8,7 @@ const app = new Koa();
 // Error-handling middleware
 app.use(async (ctx: Koa.Context, next: () => Promise<any>) => {
   try {
-    ctx.state.db = connection;
+    ctx.state.db = connection;//Db injection
     
     await next();
   } catch (error) {
