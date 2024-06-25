@@ -8,12 +8,13 @@ import { Repository } from "typeorm";
 const routerOpts: Router.IRouterOptions = { prefix: "/movies" };
 const router = new Router(routerOpts);
 
-router.get("/", async (ctx: Context) => {
+router.get("/", async (ctx: Context) =>{try {
   const movieRepo: Repository<movieEntity> =
     ctx.state.db.getRepository(movieEntity);
   const movies = await movieRepo.find();
   ctx.body = { data: movies };
-});
+
+}catch (err) {ctx.body=err}});
 
 router.get("/:id", async (ctx: Context) => {
   const movieRepo: Repository<movieEntity> =
@@ -25,6 +26,7 @@ router.get("/:id", async (ctx: Context) => {
     ctx.throw(HttpStatus.StatusCodes.NOT_FOUND);
   }
   ctx.body = { data: { movie: movie } };
+  // ctx.status = 202;
 });
 
 router.post("/", async (ctx: Context) => {
@@ -35,6 +37,7 @@ router.post("/", async (ctx: Context) => {
     const movie = movieRepo.create((ctx as any).request.body);
     await movieRepo.save(movie);
     ctx.body = { data: movie };
+    ctx.status = 201;
   } catch (e) {
     console.log(e);
   }
@@ -52,6 +55,7 @@ router.put("/:id", async (ctx: Koa.Context) => {
   movieRepo.merge(movie, (ctx as any).request.body);
   const updatedMovie = await movieRepo.save(movie);
   ctx.body = { data: updatedMovie };
+  ctx.status = 202;
 });
 
 router.delete("/:id", async (ctx: Koa.Context) => {
@@ -64,6 +68,7 @@ router.delete("/:id", async (ctx: Koa.Context) => {
   }
   await movieRepo.remove(movie);
   ctx.body = "Deleted successfully";
+  ctx.status = 204;
 });
 
 export default router;
