@@ -12,7 +12,7 @@ app.use(async (ctx: Koa.Context, next: () => Promise<any>) => {
     
     await next();
   } catch (error) {
-    ctx.status = error.statusCode || error.status || HttpStatus.INTERNAL_SERVER_ERROR;
+    ctx.status = error.statusCode || error.status || HttpStatus.StatusCodes.INTERNAL_SERVER_ERROR;
     error.status = ctx.status;
     ctx.body = [  error.message || "Internal Server Error" ];
     ctx.app.emit("error", error,[  error.message || "Internal Server Error" ]);
